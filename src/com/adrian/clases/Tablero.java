@@ -23,11 +23,14 @@ public class Tablero {
         }
     }
 
+
+
+
     public static void crearJugador(ArrayList<Jugador> listaJugadores, int dinero) {
         Scanner de = new Scanner(System.in);
         System.out.println("Introduce nombre del jugador");
         String nombre = de.nextLine();
-        listaJugadores.add(new Jugador(nombre, dinero, new ArrayList<Casillas>()));
+        listaJugadores.add(new Jugador(nombre, dinero, new ArrayList<>()));
     }
 
     public static void turnos(ArrayList<Casillas> listaCasillas, ArrayList<Jugador> listaJugadores, Jugador jugador) {
@@ -126,10 +129,7 @@ public class Tablero {
     }
 
     public static boolean victoria(Jugador jugador) {
-        boolean win = false;
-        if (comprobarMarrones(jugador) && comprobarAzules(jugador)) {
-            win = true;
-        }
+        boolean win = comprobarMarrones(jugador) && comprobarAzules(jugador);
         if (comprobarRosas(jugador) && comprobarNaranjas(jugador)) {
             win = true;
         }
@@ -285,11 +285,11 @@ public class Tablero {
 
     public static boolean comprobarTransaccion(ArrayList<Casillas> listaCasillas, ArrayList<Jugador> listaJugadores, Jugador jugador) {
         boolean transaccion = false;
-        for (int i = 0; i < listaJugadores.size(); i++) {
-            for (int j = 0; j < listaJugadores.get(i).getPropiedades().size(); j++) {
-                if (listaCasillas.get(jugador.getPosicion()).getNombre().equals(listaJugadores.get(i).getPropiedades().get(j).getNombre())) {
-                    System.out.println("Esta casilla pertenece al jugador: " + listaJugadores.get(i).getNombre());
-                    sumarDinero(listaJugadores.get(i), calcularImpuestos(jugador, listaCasillas));
+        for (Jugador listaJugadore : listaJugadores) {
+            for (int j = 0; j < listaJugadore.getPropiedades().size(); j++) {
+                if (listaCasillas.get(jugador.getPosicion()).getNombre().equals(listaJugadore.getPropiedades().get(j).getNombre())) {
+                    System.out.println("Esta casilla pertenece al jugador: " + listaJugadore.getNombre());
+                    sumarDinero(listaJugadore, calcularImpuestos(jugador, listaCasillas));
                     restarDinero(jugador, calcularImpuestos(jugador, listaCasillas));
                     transaccion = true;
                 }

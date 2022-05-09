@@ -3,9 +3,7 @@ package com.adrian.juego;
 import com.adrian.clases.Casillas;
 import com.adrian.clases.Jugador;
 import com.adrian.clases.Tablero;
-import com.adrian.excepciones.NJugadoresException;
 import com.adrian.interfaz.Interfaz;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -14,6 +12,7 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<Casillas> listaCasillas = new ArrayList<>();
         ArrayList<Jugador> listaJugadores = new ArrayList<>();
+
         Tablero.crearCasilla(listaCasillas);
 
         boolean partida = true;
@@ -23,7 +22,7 @@ public class Main {
         for (int i = 0; i < nJugadores; i++) {
             Tablero.crearJugador(listaJugadores, 1500);
         }
-        Interfaz.crear(listaCasillas);
+        Interfaz.generarTablero(listaCasillas);
         while (partida) {
             for (int i = 0; i < nJugadores; i++) {
                 Tablero.turnos(listaCasillas, listaJugadores, listaJugadores.get(i));

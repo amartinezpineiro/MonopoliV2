@@ -1,0 +1,12 @@
+1.Interfaz:
+Primer menu con informacion()
+Segundo menu para elecion de jugadores
+Tablero
+Casillas
+2.Herencia:
+
+3.Uso de bases de datos:
+(poder guardar una partida para seguir mas tarde)
+4.Uso de librerias:
+
+5.Excepciones:
