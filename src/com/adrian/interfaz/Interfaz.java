@@ -41,17 +41,46 @@ public class Interfaz {
         marco.setLayout(null);
         marco.setResizable(true);
         marco.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        marco.setBounds(0,0,500,500);
+        marco.setBounds(500,0,500,500);
         JPanel casilla = new JPanel();
         casilla.setLayout(null);
         casilla.setBounds(0,0,500,500);
 
         //etiquetas
         JButton colorCasilla = new JButton();
-        colorCasilla.setBackground(new Color(255, 153, 0, 255));
-        colorCasilla.setBounds(0,0,75,50);
+        switch (listaCasillas.get(jugador.getPosicion()).getCodigo()) {
+            case 1:
+                colorCasilla.setBackground(new Color(94, 57, 0));
+                break;
+            case 2:
+                colorCasilla.setBackground(new Color(22, 147, 150));
+                break;
+            case 3:
+                colorCasilla.setBackground(new Color(160, 11, 176, 255));
+                break;
+            case 4:
+                colorCasilla.setBackground(new Color(255, 153, 0));
+                break;
+            case 5:
+                colorCasilla.setBackground(new Color(245, 6, 34));
+                break;
+            case 6:
+                colorCasilla.setBackground(new Color(243, 223, 12, 255));
+                break;
+            case 7:
+                colorCasilla.setBackground(new Color(5, 148, 7));
+                break;
+            case 8:
+                colorCasilla.setBackground(new Color(4, 36, 168));
+                break;
+            default:
+                colorCasilla.setBackground(new Color(255, 255, 255));
+                break;
+        }
+
+        colorCasilla.setBounds(0,0,500,50);
         JLabel nombreCasilla = new JLabel(listaCasillas.get(jugador.getPosicion()).getNombre());
-        nombreCasilla.setBounds(0,50,75,50);
+        nombreCasilla.setBounds(0,50,500,50);
 
         //Añado los componentes al primer panel
         casilla.add(colorCasilla);
