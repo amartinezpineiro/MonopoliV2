@@ -2,22 +2,37 @@ package com.adrian.clases;
 
 import com.adrian.interfaz.Interfaz;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Tablero {
 
+    /**
+     * @param listaJugadores
+     * @return
+     * Este método pide al usuario el número de jugadores y llama al método que lo crea.
+     */
     public static int pedirNJugadores(ArrayList<Jugador> listaJugadores){
-        System.out.println("introduce el numero de jugadores");
-        Scanner leerJugadores = new Scanner(System.in);
-        int nJugadores = leerJugadores.nextInt();
+        int nJugadores = Integer.parseInt(JOptionPane.showInputDialog("Introduce el numero de jugadores"));
         for (int i = 0; i < nJugadores; i++) {
             Tablero.crearJugador(listaJugadores, 1500);
         }
         return nJugadores;
+    }
+
+    /**
+     * @param listaJugadores
+     * @param dinero
+     * Este método sirve para crear objetos de la clase Jugador y añadirlos a un ArrayList<Jugador>.
+     */
+    public static void crearJugador(ArrayList<Jugador> listaJugadores, int dinero) {
+        String nombre = JOptionPane.showInputDialog("Introduce nombre del jugador");
+        listaJugadores.add(new Jugador(nombre, dinero, new ArrayList<>()));
     }
 
     public static void partida(ArrayList<Jugador> listaJugadores,ArrayList<Casillas> listaCasillas,int nJugadores){
@@ -43,6 +58,11 @@ public class Tablero {
         }
     }
 
+    /**
+     * @param listaCasillas
+     * Este método recoge los datos de una base de datos para crear objetos de la clase Casillas y las
+     * añade a un ArrayList<Casillas> que recibe por parámetro.
+     */
     public static void crearCasilla(ArrayList<Casillas> listaCasillas) {
         File fichero = new File("/home/dam1/git/Monopoli/src/com/adrian/datos/Prueba.txt");
         try {
@@ -56,28 +76,22 @@ public class Tablero {
         }
     }
 
-
-
-
-    public static void crearJugador(ArrayList<Jugador> listaJugadores, int dinero) {
-        Scanner de = new Scanner(System.in);
-        System.out.println("Introduce nombre del jugador");
-        String nombre = de.nextLine();
-        listaJugadores.add(new Jugador(nombre, dinero, new ArrayList<>()));
-    }
-
+    /**
+     * @param listaCasillas
+     * @param listaJugadores
+     * @param jugador
+     * Este método
+     */
     public static void turnos(ArrayList<Casillas> listaCasillas, ArrayList<Jugador> listaJugadores, Jugador jugador) {
-        System.out.println("Turno del jugador: " + jugador.getNombre());
+        JOptionPane.showMessageDialog(null,"Turno del jugador: " + jugador.getNombre());
         comprobarCasas(jugador, listaCasillas);
-        Scanner ds = new Scanner(System.in);
         if (jugador.getPierdeTurno() > 0) {
             System.out.println("El jugador: " + jugador.getNombre() + " pierde turno");
             jugador.setPierdeTurno(jugador.getPierdeTurno() - 1);
             System.out.println("Quedan: " + jugador.getPierdeTurno() + " turnos para salir de la carcel");
 
         } else {
-            System.out.println("1. Tirar dado");
-            switch (ds.nextInt()) {
+            switch (Integer.parseInt(JOptionPane.showInputDialog("1. Tirar dado\n2. Dado admin"))) {
                 case 1:
                     tirarDado(listaCasillas, jugador);
                     break;
@@ -102,11 +116,39 @@ public class Tablero {
     public static void tirarDado(ArrayList<Casillas> listaCasillas, Jugador jugador) {
         Random rm = new Random();
         int avanzar = 1 + rm.nextInt(6);
+        JOptionPane.showMessageDialog(null,"En el dado salio un: " + avanzar);
+        if (jugador.getPosicion() + avanzar > (listaCasillas.size()-1)) {
+            jugador.setPosicion(jugador.getPosicion() + avanzar - listaCasillas.size());
+            JOptionPane.showMessageDialog(null,"Has pasado por la casilla de Salida");
+            sumarDinero(jugador, 200);
+        } else if (jugador.getPosicion() == (listaCasillas.size()-1)) {
+            jugador.setPosicion(jugador.getPosicion() + avanzar - listaCasillas.size());
+            JOptionPane.showMessageDialog(null,"Has pasado por la casilla de Salida");
+            sumarDinero(jugador, 200);
+        } else {
+            jugador.setPosicion(jugador.getPosicion() + avanzar);
+        }
+        JOptionPane.showMessageDialog(null,"Has parado en la casilla: " + listaCasillas.get(jugador.getPosicion()).getNombre()
+                + "\nPrecio: " + listaCasillas.get(jugador.getPosicion()).getPrecio()
+                + "\nImpuesto sin casas: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()
+                + "\nImpuesto con 1 casa: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()*2
+                + "\nImpuesto con 2 casas: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()*3
+                + "\nImpuesto con 3 casas: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()*4
+                + "\nImpuesto con 4 casas: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()*5
+                + "\nImpuesto con 1 hotel: " + listaCasillas.get(jugador.getPosicion()).getImpuesto()*6
+                + "\nPrecio por Casa: " + listaCasillas.get(jugador.getPosicion()).getPrecioCasa());
+
+    }
+    public static void dadoAdmin(ArrayList<Casillas> listaCasillas, Jugador jugador) {
+        Scanner escanerAdmin = new Scanner(System.in);
+        System.out.println("introduce el numero que quieres sacar en el dado");
+        int avanzar = escanerAdmin.nextInt();
         System.out.println("En el dado salio un: " + avanzar);
         if (jugador.getPosicion() + avanzar > 23) {
             jugador.setPosicion(jugador.getPosicion() + avanzar - 24);
             System.out.println("Has pasado por la casilla de Salida");
             sumarDinero(jugador, 200);
+
         } else if (jugador.getPosicion() == 23) {
             jugador.setPosicion(jugador.getPosicion() + avanzar - 24);
             System.out.println("Has pasado por la casilla de Salida");
@@ -114,7 +156,6 @@ public class Tablero {
         } else {
             jugador.setPosicion(jugador.getPosicion() + avanzar);
         }
-        Interfaz.generarCasillas(listaCasillas,jugador);
         System.out.println("Estas en la casilla: " + listaCasillas.get(jugador.getPosicion()).getNombre());
     }
 
@@ -141,26 +182,11 @@ public class Tablero {
         }
     }
 
-    public static void dadoAdmin(ArrayList<Casillas> listaCasillas, Jugador jugador) {
-        Scanner escanerAdmin = new Scanner(System.in);
-        System.out.println("introduce el numero que quieres sacar en el dado");
-        int avanzar = escanerAdmin.nextInt();
-        System.out.println("En el dado salio un: " + avanzar);
-        if (jugador.getPosicion() + avanzar > 23) {
-            jugador.setPosicion(jugador.getPosicion() + avanzar - 24);
-            System.out.println("Has pasado por la casilla de Salida");
-            sumarDinero(jugador, 200);
-
-        } else if (jugador.getPosicion() == 23) {
-            jugador.setPosicion(jugador.getPosicion() + avanzar - 24);
-            System.out.println("Has pasado por la casilla de Salida");
-            sumarDinero(jugador, 200);
-        } else {
-            jugador.setPosicion(jugador.getPosicion() + avanzar);
-        }
-        System.out.println("Estas en la casilla: " + listaCasillas.get(jugador.getPosicion()).getNombre());
-    }
-
+    /**
+     * @param jugador
+     * @return
+     * Este método comprueba si el jugador cumple los requisitos para la victoria por monopolio.
+     */
     public static boolean victoria(Jugador jugador) {
         boolean win = comprobarMarrones(jugador) && comprobarAzules(jugador);
         if (comprobarRosas(jugador) && comprobarNaranjas(jugador)) {
@@ -169,7 +195,7 @@ public class Tablero {
         if (comprobarRojas(jugador) && comprobarAmarillas(jugador)) {
             win = true;
         }
-        if (comprobarVerdes(jugador) && comprobarBlancas(jugador)) {
+        if (comprobarVerdes(jugador) && comprobarNegras(jugador)) {
             win = true;
         }
         return win;
@@ -221,7 +247,7 @@ public class Tablero {
                 break;
             case 22:
             case 24:
-                if (comprobarBlancas(jugador)) {
+                if (comprobarNegras(jugador)) {
                     menuEdif(jugador, listaCasillas.get(1), listaCasillas.get(2));
                 }
                 break;
@@ -456,15 +482,15 @@ public class Tablero {
         return verde;
     }
 
-    public static boolean comprobarBlancas(Jugador jugador) {
-        int contBlanco = 0;
+    public static boolean comprobarNegras(Jugador jugador) {
+        int contNegro = 0;
         boolean blanco = false;
         for (int i = 0; i < jugador.getPropiedades().size(); i++) {
             if (jugador.getPropiedades().get(i).getCodigo() == 8) {
-                contBlanco++;
+                contNegro++;
             }
         }
-        if (contBlanco == 2) {
+        if (contNegro == 2) {
             blanco = true;
         }
         return blanco;

@@ -74,7 +74,7 @@ public class Interfaz {
                 colorCasilla.setBackground(new Color(4, 36, 168));
                 break;
             default:
-                colorCasilla.setBackground(new Color(255, 255, 255));
+                colorCasilla.setBackground(new Color(0, 0, 0, 255));
                 break;
         }
 
